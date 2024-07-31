@@ -65,7 +65,6 @@ class ArtifactClient:
     def perform_gathering(self):
         url = f"{self.server}/my/{self.character}/action/gathering"
         response = requests.post(url, headers=self.headers)
-        ic(response.status_code)
         data = response.json()
         ic(response.status_code)
         return data['data']['cooldown']['total_seconds']
