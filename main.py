@@ -1,61 +1,12 @@
+import argparse
 import os
+
 from icecream import ic
-import requests
 import time
 from dotenv import load_dotenv
+from client import ArtifactClient
 
 load_dotenv()
-
-
-class ArtifactClient:
-
-    def __init__(self, server, token, character):
-        self.server = server
-        self.token = token
-        self.character = character
-        self.headers = {
-            "Accept": "application/json",
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json"
-        }
-
-    def move_character(self, x, y):
-        url = f"{self.server}/my/{self.character}/action/move"
-        data = {
-            "destination": {
-                "x": x,
-                "y": y
-            }
-        }
-        response = requests.post(url, headers=self.headers, json=data)
-        return response.json()
-
-    def equip_item(self, slot, item_code):
-        url = f"{self.server}/my/{self.character}/action/equip"
-        data = {
-            "slot": slot,
-            "item": {
-                "code": item_code
-            }
-        }
-        response = requests.post(url, headers=self.headers, json=data)
-        return response.json()
-
-    def unequip_item(self, slot):
-        url = f"{self.server}/my/{self.character}/action/unequip"
-        data = {
-            "slot": slot
-        }
-        response = requests.post(url, headers=self.headers, json=data)
-        return response.json()
-
-    def perform_gathering(self):
-        url = f"{self.server}/my/{self.character}/action/gathering"
-        response = requests.post(url, headers=self.headers)
-        ic(response.status_code)
-        data = response.json()
-        if response.status_code == 200:
-            return data['data']['cooldown']['total_seconds']
 
 
 class GatheringBot:
@@ -72,11 +23,35 @@ class GatheringBot:
             time.sleep(self.cooldown)
 
 
-if __name__ == "__main__":
-    server = 'https://api.artifactsmmo.com'
+def main():
+    parser = argparse.ArgumentParser(description='Artifact MMO Gathering Bot')
+    parser.add_argument('--gather', action='store_true', help='Run auto gathering')
+    parser.add_argument('--attack', type=str, help='Attack the tile you are on')
+    parser.add_argument('--move', type=str, help='Move to a tile (format: x,y)')
+    parser.add_argument('--equip', type=int, nargs=2, help='Equip an item (format: slot item)')
+    parser.add_argument('--unequip', type=int, help='Unequip an item (format: slot)')
+    args = parser.parse_args()
+
+    server = os.getenv('SERVER')
     token = os.getenv('API_TOKEN')
-    character = "First_Victim"
+    character = os.getenv('CHARACTER')
 
     client = ArtifactClient(server, token, character)
-    bot = GatheringBot(client)
-    bot.run()
+
+    if args.gather:
+        GatheringBot(client)
+    elif args.attack:
+        client.attack_character()
+    elif args.move:
+        x, y = map(int, args.move.split(','))
+        client.move_character(x, y)
+    elif args.equip:
+        client.equip_item(*args.equip)
+    elif args.unequip:
+        client.unequip_item(args.unequip)
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()
