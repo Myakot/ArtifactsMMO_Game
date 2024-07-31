@@ -67,4 +67,10 @@ class ArtifactClient:
         response = requests.post(url, headers=self.headers)
         data = response.json()
         ic(response.status_code)
-        return data['data']['cooldown']['total_seconds']
+        if response.status_code == 598:
+            ic('Resource not found on this map! Go somewhere else!')
+        elif response.status_code == 499:
+            ic('Character in cooldown!')
+        else:
+            ic('Performing gathering...')
+            return data['data']['cooldown']['total_seconds']
