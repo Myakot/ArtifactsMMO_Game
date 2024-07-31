@@ -26,8 +26,8 @@ class ArtifactClient:
         ic('Moving to {}'.format(x, y), response.status_code)
         return response.json()
 
-    def attack_character(self):
-        url = f"{self.server}/my/{self.character}/action/attack"
+    def attack(self):
+        url = f"{self.server}/my/{self.character}/action/fight"
         response = requests.post(url, headers=self.headers)
         ic(response.status_code)
         return response.json()

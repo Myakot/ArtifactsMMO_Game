@@ -26,7 +26,7 @@ class GatheringBot:
 def main():
     parser = argparse.ArgumentParser(description='Artifact MMO Gathering Bot')
     parser.add_argument('--gather', action='store_true', help='Run auto gathering')
-    parser.add_argument('--attack', type=str, help='Attack the tile you are on')
+    parser.add_argument('--attack', action='store_true', help='Attack the tile you are on')
     parser.add_argument('--move', type=str, help='Move to a tile (format: x,y)')
     parser.add_argument('--equip', type=str, help='Equip an item (format: item_code,slot)')
     parser.add_argument('--unequip', type=str, help='Unequip an item (format: slot)')
@@ -42,7 +42,7 @@ def main():
     if args.gather:
         GatheringBot(client).run()
     elif args.attack:
-        client.attack_character()
+        client.attack()
     elif args.move:
         x, y = map(int, args.move.split(','))
         client.move_character(x, y)
