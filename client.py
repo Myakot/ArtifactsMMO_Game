@@ -62,7 +62,7 @@ class ArtifactClient:
         ic(response.status_code)
         return response.json()
 
-    def perform_gathering(self):
+    def gathering(self):
         url = f"{self.server}/my/{self.character}/action/gathering"
         response = requests.post(url, headers=self.headers)
         data = response.json()

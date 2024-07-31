@@ -21,10 +21,9 @@ class Bot:
     def run(self):
         while True:
             if self.task == 'gather':
-                self.cooldown = self.client.perform_gathering()
+                self.cooldown = self.client.gathering()
             elif self.task == 'attack':
                 self.client.attack()
-                self.cooldown = 25  # default cooldown
             elif self.task == 'move':
                 x, y = map(int, self.args.move.split(','))
                 self.client.move_character(x, y)
@@ -38,6 +37,11 @@ class Bot:
                 self.client.unequip_item(item_id)
                 break
             elif self.task == 'deposit':
+                ic('starting depositing')
+                time.sleep(self.cooldown) # in case another action just happened
+                self.client.move_character(4, 1) # move to bank
+                ic('moved to bank')
+                time.sleep(self.cooldown) # wait after moving
                 item_id, quantity = map(str, self.args.deposit.split(','))
                 self.client.deposit(item_id, quantity)
                 break
