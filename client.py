@@ -32,6 +32,17 @@ class ArtifactClient:
         ic(response.status_code)
         return response.json()
 
+    def deposit(self, code, quantity):
+        ic(code, int(quantity))
+        url = f"{self.server}/my/{self.character}/action/bank/deposit"
+        data = {
+            "code": code,
+            "quantity": int(quantity)
+        }
+        response = requests.post(url, headers=self.headers, json=data)
+        ic(response.status_code)
+        return response.json()
+
     def equip_item(self, slot, item_code):
         url = f"{self.server}/my/{self.character}/action/equip"
         data = {

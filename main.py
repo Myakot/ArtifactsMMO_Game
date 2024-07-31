@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--move', type=str, help='Move to a tile (format: x,y)')
     parser.add_argument('--equip', type=int, nargs=2, help='Equip an item (format: slot item)')
     parser.add_argument('--unequip', type=int, help='Unequip an item (format: slot)')
+    parser.add_argument('--deposit', type=str, help='Deposit an item (format: code,quantity)')
     args = parser.parse_args()
 
     server = os.getenv('SERVER')
@@ -39,7 +40,7 @@ def main():
     client = ArtifactClient(server, token, character)
 
     if args.gather:
-        GatheringBot(client)
+        GatheringBot(client).run()
     elif args.attack:
         client.attack_character()
     elif args.move:
@@ -49,6 +50,9 @@ def main():
         client.equip_item(*args.equip)
     elif args.unequip:
         client.unequip_item(args.unequip)
+    elif args.deposit:
+        code, quantity = map(str, args.deposit.split(','))
+        client.deposit(code, quantity)
     else:
         parser.print_help()
 
