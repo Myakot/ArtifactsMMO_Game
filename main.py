@@ -28,8 +28,8 @@ def main():
     parser.add_argument('--gather', action='store_true', help='Run auto gathering')
     parser.add_argument('--attack', type=str, help='Attack the tile you are on')
     parser.add_argument('--move', type=str, help='Move to a tile (format: x,y)')
-    parser.add_argument('--equip', type=int, nargs=2, help='Equip an item (format: slot item)')
-    parser.add_argument('--unequip', type=int, help='Unequip an item (format: slot)')
+    parser.add_argument('--equip', type=str, help='Equip an item (format: item_code,slot)')
+    parser.add_argument('--unequip', type=str, help='Unequip an item (format: slot)')
     parser.add_argument('--deposit', type=str, help='Deposit an item (format: code,quantity)')
     args = parser.parse_args()
 
@@ -47,7 +47,8 @@ def main():
         x, y = map(int, args.move.split(','))
         client.move_character(x, y)
     elif args.equip:
-        client.equip_item(*args.equip)
+        item_code, slot = map(str, args.equip.split(','))
+        client.equip_item(item_code, slot)
     elif args.unequip:
         client.unequip_item(args.unequip)
     elif args.deposit:

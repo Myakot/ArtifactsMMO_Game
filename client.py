@@ -43,13 +43,11 @@ class ArtifactClient:
         ic(response.status_code)
         return response.json()
 
-    def equip_item(self, slot, item_code):
+    def equip_item(self, item_code, slot):
         url = f"{self.server}/my/{self.character}/action/equip"
         data = {
-            "slot": slot,
-            "item": {
-                "code": item_code
-            }
+            "code": item_code,
+            "slot": slot
         }
         response = requests.post(url, headers=self.headers, json=data)
         ic(response.status_code)
